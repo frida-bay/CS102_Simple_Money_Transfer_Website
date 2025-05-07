@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Farida",
+    "email": "farida@netsanctum.com",
+    "password": "try@h@ckm3!",
+    "role": "admin",
+    "balance": 0
+  },
+  {
+    "id": 2,
+    "name": "Tony Stark",
+    "email": "tony@starkindustries.com",
+    "password": "ironman123",
+    "role": "user",
+    "balance": 4845
+  },
+  {
+    "id": 3,
+    "name": "Steve Rogers",
+    "email": "steve@avengers.com",
+    "password": "capamerica123",
+    "role": "user",
+    "balance": 4101
+  },
+  {
+    "id": 4,
+    "name": "Peter Parker",
+    "email": "peter@dailybugle.com",
+    "password": "spiderman123",
+    "role": "user",
+    "balance": 3003
+  },
+  {
+    "id": 5,
+    "name": "Natasha Romanoff",
+    "email": "natasha@shield.com",
+    "password": "blackwidow123",
+    "role": "user",
+    "balance": 3551
+  }
+]

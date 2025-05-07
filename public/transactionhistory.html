@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NetSanctum - Transaction History</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+  <style>
+    .top-right-links {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      z-index: 2; /* Ensure above overlay if present */
+    }
+
+    .top-right-links a {
+      margin-left: 20px;
+      color: #00f0ff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .top-right-links a:hover {
+      text-shadow: 0 0 5px #00f0ff, 0 0 10px #00f0ff;
+    }
+
+    .center-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px; /* Add some padding */
+    }
+
+    .transaction-table {
+      width: 80%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      color: #c8e8ff;
+    }
+
+    .transaction-table th, .transaction-table td {
+      border: 1px solid #00f0ff;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .transaction-table th {
+      background-color: rgba(0, 240, 255, 0.1);
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body class="transaction-history">
+
+  <div class="top-right-links">
+    <a href="dashboard.html">Go Back to Dashboard</a>
+  </div>
+
+  <div class="center-content">
+    <h1>Transaction History</h1>
+    <table class="transaction-table">
+      <thead>
+        <tr>
+          <th>Sender</th>
+          <th>Receiver</th>
+          <th>Amount</th>
+          <th>Date and Time</th>
+        </tr>
+      </thead>
+      <tbody id="transactionTableBody">
+        </tbody>
+    </table>
+  </div>
+
+  <script>
+    fetch('/api/transactions')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(transactions => {
+        console.log('Transactions received from API:', transactions); // Log the received data
+
+        const tableBody = document.getElementById('transactionTableBody');
+        if (!tableBody) {
+          console.error('Error: transactionTableBody element not found!');
+          return;
+        }
+
+        if (!transactions || transactions.length === 0) {
+          const row = document.createElement('tr');
+          row.innerHTML = '<td colspan="4">No transaction history available.</td>';
+          tableBody.appendChild(row);
+          return;
+        }
+
+        transactions.reverse().forEach(tx => {
+          console.log('Processing transaction:', tx); // Log each transaction
+
+          if (!tx || !tx.timestamp || !tx.sender || !tx.receiver || tx.amount === undefined) {
+            console.warn('Warning: Missing or undefined data in transaction:', tx);
+            return; // Skip this transaction if crucial data is missing
+          }
+
+          const date = new Date(tx.timestamp);
+          const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth()+1).toString().padStart(2, '0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${tx.sender}</td>
+            <td>${tx.receiver}</td>
+            <td>${tx.amount} $</td>
+            <td>${formattedDate}</td>
+          `;
+          tableBody.appendChild(row);
+        });
+      })
+      .catch(error => {
+        console.error('Error loading transactions:', error);
+        const tableBody = document.getElementById('transactionTableBody');
+        if (tableBody) {
+          const row = document.createElement('tr');
+          row.innerHTML = `<td colspan="4" style="color: red;">Error loading transaction history: ${error.message}</td>`;
+          tableBody.appendChild(row);
+        }
+      });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+    "name": "netsanctum-money-transfer",
+    "version": "1.0.0",
+    "description": "NetSanctum Money Transfer System",
+    "main": "server.js",
+    "scripts": {
+      "start": "node server.js"
+    },
+    "author": "Farida",
+    "license": "MIT",
+    "dependencies": {
+      "express": "^4.18.2"
+    }
+  }
+  

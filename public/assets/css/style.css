@@ -1,0 +1,107 @@
+body {
+  background: url('../img/background.jpg.jpg') no-repeat center center fixed;
+  background-size: cover;
+  font-family: 'Orbitron', sans-serif;
+  color: #a7f0f9;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+h1 {
+  font-size: 60px;
+  margin-bottom: 20px;
+  color: #00f0ff;
+  text-shadow: 0 0 15px #00f0ff, 0 0 30px #00f0ff;
+}
+
+p {
+  font-size: 24px;
+  margin-bottom: 40px;
+  color: #c8e8ff;
+}
+
+.top-right-links {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+}
+
+.top-right-links a {
+  margin-left: 20px;
+  color: #00f0ff;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.top-right-links a:hover {
+  text-shadow: 0 0 5px #00f0ff, 0 0 10px #00f0ff;
+}
+
+.center-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.btn-neon {
+  display: inline-block;
+  margin-top: 30px;
+  padding: 20px 40px;
+  background-color: transparent;
+  color: #00f0ff;
+  border: 3px solid #00f0ff;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  border-radius: 15px;
+  transition: 0.3s;
+  font-size: 26px;
+  box-shadow: 0 0 20px #00f0ff, 0 0 40px #00f0ff;
+  animation: pulse 2s infinite;
+  text-decoration: none;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 10px #00f0ff, 0 0 10px #00f0ff, 0 0 30px #00f0ff;
+  }
+  50% {
+    box-shadow: 0 0 20px #00f0ff, 0 0 20px #00f0ff, 0 0 40px #00f0ff;
+  }
+  100% {
+    box-shadow: 0 0 10px #00f0ff, 0 0 10px #00f0ff, 0 0 30px #00f0ff;
+  }
+}
+
+/* ==== FINAL INPUT DESIGN: Email, Password, Receiver's Email, Amount ==== */
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="number"] {
+  display: block;
+  margin: 10px auto; /* Center the inputs */
+  width: 300px;
+  padding: 15px 20px;
+  background-color: rgba(0, 0, 0, 0.6); /* Darker initial background */
+  border: 2px solid #00f0ff;
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 18px;
+  outline: none;
+  text-align: left;
+  box-shadow: 0 0 10px #00f0ff, 0 0 20px #00f0ff;
+  transition: 0.3s;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="text"]:focus,
+input[type="number"]:focus {
+  box-shadow: 0 0 20px #00f0ff, 0 0 40px #00f0ff;
+  background-color: rgba(0, 0, 0, 0.8); /* Slightly darker on focus */
+}
+
+

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NetSanctum - Customers</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="customers">
+  <div class="container">
+    <h1>Our Customers</h1>
+    <table id="customersTable" style="margin: 0 auto; color: #00f0ff;">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Balance</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <a href="dashboard.html" class="btn-neon">Back to Dashboard</a>
+  </div>
+
+  <script>
+    fetch('/api/users')
+      .then(response => response.json())
+      .then(users => {
+        const table = document.querySelector('#customersTable tbody');
+        users.forEach(user => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>$${user.balance}</td>
+          `;
+          table.appendChild(row);
+        });
+      });
+  </script>
+</body>
+</html>

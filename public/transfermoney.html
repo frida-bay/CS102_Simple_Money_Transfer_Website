@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NetSanctum - Transfer Money</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="transfer">
+  <div class="container">
+    <h1>Transfer Money</h1>
+    <form id="transferForm">
+      <input type="email" id="receiver" placeholder="Receiver's Email" required>
+      <input type="number" id="amount" placeholder="Amount" required>
+      <button type="submit" class="btn-neon">Send Money</button>
+    </form>
+    <p id="transferMessage"></p>
+    <a href="dashboard.html" class="btn-neon">Back to Dashboard</a>
+  </div>
+
+  <script>
+    document.getElementById('transferForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      const receiverEmail = document.getElementById('receiver').value;
+      const amount = parseFloat(document.getElementById('amount').value);
+
+      fetch('/api/transfer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ senderEmail: currentUser.email, receiverEmail, amount })
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('transferMessage').innerText = data.message;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    });
+  </script>
+</body>
+</html>
