@@ -8,6 +8,7 @@
 </head>
 <body class="dashboard">
 
+<!-- Protection: Redirect if not logged in -->
 <script>
   const user = JSON.parse(localStorage.getItem('currentUser'));
   if (!user) {
@@ -23,13 +24,16 @@
   <a href="transactionhistory.html" class="btn-neon">Transaction History</a>
   <a href="about.html" class="btn-neon">About</a>
   <a href="contact.html" class="btn-neon">Contact</a>
-  <a href="login.html" class="btn-neon" onclick="logout()">Logout</a>
+  <a href="#" class="btn-neon" onclick="logout()">Logout</a>
 </div>
 
+<!-- Fill user name and logout function -->
 <script>
-  if (user) {
-    document.getElementById('userName').innerText = user.name;
-  }
+  document.addEventListener('DOMContentLoaded', function() {
+    if (user) {
+      document.getElementById('userName').innerText = user.name;
+    }
+  });
 
   function logout() {
     localStorage.removeItem('currentUser');

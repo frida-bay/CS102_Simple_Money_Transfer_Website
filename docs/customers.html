@@ -7,36 +7,57 @@
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body class="customers">
-  <div class="container">
-    <h1>Our Customers</h1>
-    <table id="customersTable" style="margin: 0 auto; color: #00f0ff;">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Balance</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <a href="dashboard.html" class="btn-neon">Back to Dashboard</a>
-  </div>
 
-  <script>
-    fetch('/api/users')
-      .then(response => response.json())
-      .then(users => {
-        const table = document.querySelector('#customersTable tbody');
-        users.forEach(user => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${user.name}</td>
-            <td>${user.email}</td>
-            <td>$${user.balance}</td>
-          `;
-          table.appendChild(row);
-        });
-      });
-  </script>
+<!-- Protection: Redirect if not logged in -->
+<script>
+  const user = JSON.parse(localStorage.getItem('currentUser'));
+  if (!user) {
+    window.location.href = 'login.html';
+  }
+</script>
+
+<div class="top-right-links">
+  <a href="dashboard.html">Go Back to Dashboard</a>
+</div>
+
+<div class="center-content">
+  <h1>Customer List</h1>
+  <table class="transaction-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Balance</th>
+      </tr>
+    </thead>
+    <tbody id="customersTableBody">
+      <!-- Customers will be loaded here -->
+    </tbody>
+  </table>
+</div>
+
+<script>
+  const users = [
+    { email: "farida@netsanctum.com", password: "try@h@ckm3!", name: "Farida", role: "admin", balance: 10000 },
+    { email: "ironman@avengers.com", password: "iamironman", name: "Tony Stark", role: "user", balance: 5000 },
+    { email: "spiderman@avengers.com", password: "withgreatpower", name: "Peter Parker", role: "user", balance: 3000 },
+    { email: "natasha@avengers.com", password: "blackwidow", name: "Natasha Romanoff", role: "user", balance: 4000 },
+    { email: "cap@avengers.com", password: "freedom", name: "Steve Rogers", role: "user", balance: 4500 },
+    { email: "thor@asgard.com", password: "godofthunder", name: "Thor Odinson", role: "user", balance: 6000 }
+  ];
+
+  const tableBody = document.getElementById('customersTableBody');
+
+  users.forEach(user => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${user.name}</td>
+      <td>${user.email}</td>
+      <td>${user.balance} $</td>
+    `;
+    tableBody.appendChild(row);
+  });
+</script>
+
 </body>
 </html>
