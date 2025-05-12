@@ -6,7 +6,7 @@ const path = require('path');
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'docs')));
+app.use(express.static(__dirname));
 
 // API: LOGIN
 app.post('/api/login', (req, res) => {
