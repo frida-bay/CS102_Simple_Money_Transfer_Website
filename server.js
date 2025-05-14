@@ -6,15 +6,15 @@ const path = require('path');
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'docs')));  // not public anymore!
 
-// Serve static frontend
-app.use(express.static(path.join(__dirname, 'docs')));
+// Load fake users
+const fakeUsers = require('./users.json');
 
-// API: LOGIN
+// Login
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
-  const users = JSON.parse(fs.readFileSync(path.join(__dirname, 'users.json'), 'utf-8'));
-  const user = users.find(u => u.email === email && u.password === password);
+  const user = fakeUsers.find(u => u.email === email && u.password === password);
 
   if (user) {
     res.json({ success: true, user });
@@ -23,53 +23,41 @@ app.post('/api/login', (req, res) => {
   }
 });
 
-// API: TRANSFER MONEY
+// Transfer money
 app.post('/api/transfer', (req, res) => {
   const { senderEmail, receiverEmail, amount } = req.body;
-  const usersPath = path.join(__dirname, 'users.json');
-  const transactionsPath = path.join(__dirname, 'transactions.json');
-
-  const users = JSON.parse(fs.readFileSync(usersPath, 'utf-8'));
-  const transactions = JSON.parse(fs.readFileSync(transactionsPath, 'utf-8'));
+  let users = JSON.parse(fs.readFileSync('users.json', 'utf-8'));
+  let transactions = JSON.parse(fs.readFileSync('transactions.json', 'utf-8'));
 
   const sender = users.find(u => u.email === senderEmail);
   const receiver = users.find(u => u.email === receiverEmail);
 
-  if (!sender || !receiver) {
-    return res.status(400).json({ success: false, message: 'Invalid sender or receiver' });
-  }
-
-  if (sender.balance < amount) {
-    return res.status(400).json({ success: false, message: 'Insufficient balance' });
+  if (!sender || !receiver || sender.balance < amount) {
+    return res.status(400).json({ success: false, message: 'Invalid transaction' });
   }
 
   sender.balance -= amount;
   receiver.balance += amount;
 
-  const newTransaction = {
+  const transaction = {
     sender: sender.name,
     receiver: receiver.name,
     amount,
     timestamp: new Date().toISOString()
   };
 
-  transactions.push(newTransaction);
+  transactions.push(transaction);
 
-  fs.writeFileSync(usersPath, JSON.stringify(users, null, 2));
-  fs.writeFileSync(transactionsPath, JSON.stringify(transactions, null, 2));
+  fs.writeFileSync('users.json', JSON.stringify(users, null, 2));
+  fs.writeFileSync('transactions.json', JSON.stringify(transactions, null, 2));
 
-  res.json({ success: true, message: 'Transaction successful' });
+  res.json({ success: true, user: sender });
 });
 
-// API: GET TRANSACTION HISTORY
+// Get transactions
 app.get('/api/transactions', (req, res) => {
-  const transactions = JSON.parse(fs.readFileSync(path.join(__dirname, 'transactions.json'), 'utf-8'));
+  const transactions = JSON.parse(fs.readFileSync('transactions.json', 'utf-8'));
   res.json(transactions);
-});
-
-// Catch-all to serve frontend routes for static HTML
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'docs', 'index.html'));
 });
 
 app.listen(PORT, () => {
