@@ -5,9 +5,11 @@ const path = require('path');
 
 const PORT = process.env.PORT || 3000;
 
-// Always resolve using __dirname
 const usersPath = path.resolve(__dirname, 'users.json');
 const transactionsPath = path.resolve(__dirname, 'transactions.json');
+
+console.log('Using users.json at:', usersPath);
+console.log('Using transactions.json at:', transactionsPath);
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'docs')));
