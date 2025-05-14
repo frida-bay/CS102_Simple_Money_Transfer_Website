@@ -37,27 +37,25 @@
 </div>
 
 <script>
-  const users = [
-    { email: "farida@netsanctum.com", password: "try@h@ckm3!", name: "Farida", role: "admin", balance: 10000 },
-    { email: "ironman@avengers.com", password: "iamironman", name: "Tony Stark", role: "user", balance: 5000 },
-    { email: "spiderman@avengers.com", password: "withgreatpower", name: "Peter Parker", role: "user", balance: 3000 },
-    { email: "natasha@avengers.com", password: "blackwidow", name: "Natasha Romanoff", role: "user", balance: 4000 },
-    { email: "cap@avengers.com", password: "freedom", name: "Steve Rogers", role: "user", balance: 4500 },
-    { email: "thor@asgard.com", password: "godofthunder", name: "Thor Odinson", role: "user", balance: 6000 }
-  ];
-
-  const tableBody = document.getElementById('customersTableBody');
-
-  users.forEach(user => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${user.name}</td>
-      <td>${user.email}</td>
-      <td>${user.balance} $</td>
-    `;
-    tableBody.appendChild(row);
-  });
+  fetch('/api/users')
+    .then(res => res.json())
+    .then(users => {
+      const tableBody = document.getElementById('customersTableBody');
+      users.forEach(user => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td>${user.balance} $</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    })
+    .catch(err => {
+      console.error('Failed to load users:', err);
+    });
 </script>
 
 </body>
 </html>
+

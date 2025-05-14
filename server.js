@@ -79,6 +79,12 @@ app.get('/api/transactions', (req, res) => {
   }
 });
 
+// GET all users
+app.get('/api/users', (req, res) => {
+  const users = JSON.parse(fs.readFileSync(usersPath, 'utf-8'));
+  res.json(users);
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
