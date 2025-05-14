@@ -5,15 +5,17 @@ const path = require('path');
 
 const PORT = process.env.PORT || 3000;
 
+// Correct absolute paths for your JSON files
+const usersPath = path.join(__dirname, 'users.json');
+const transactionsPath = path.join(__dirname, 'transactions.json');
+
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'docs')));  // not public anymore!
+app.use(express.static(path.join(__dirname, 'docs'))); // not public anymore!
 
-// Load fake users
-const fakeUsers = require('./users.json');
-
-// Login
+// Login (use absolute path)
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
+  const fakeUsers = JSON.parse(fs.readFileSync(usersPath, 'utf-8'));
   const user = fakeUsers.find(u => u.email === email && u.password === password);
 
   if (user) {
@@ -23,11 +25,11 @@ app.post('/api/login', (req, res) => {
   }
 });
 
-// Transfer money
+// Transfer money (also uses absolute path)
 app.post('/api/transfer', (req, res) => {
   const { senderEmail, receiverEmail, amount } = req.body;
-  let users = JSON.parse(fs.readFileSync('users.json', 'utf-8'));
-  let transactions = JSON.parse(fs.readFileSync('transactions.json', 'utf-8'));
+  let users = JSON.parse(fs.readFileSync(usersPath, 'utf-8'));
+  let transactions = JSON.parse(fs.readFileSync(transactionsPath, 'utf-8'));
 
   const sender = users.find(u => u.email === senderEmail);
   const receiver = users.find(u => u.email === receiverEmail);
@@ -48,15 +50,15 @@ app.post('/api/transfer', (req, res) => {
 
   transactions.push(transaction);
 
-  fs.writeFileSync('users.json', JSON.stringify(users, null, 2));
-  fs.writeFileSync('transactions.json', JSON.stringify(transactions, null, 2));
+  fs.writeFileSync(usersPath, JSON.stringify(users, null, 2));
+  fs.writeFileSync(transactionsPath, JSON.stringify(transactions, null, 2));
 
   res.json({ success: true, user: sender });
 });
 
-// Get transactions
+// Get transaction history
 app.get('/api/transactions', (req, res) => {
-  const transactions = JSON.parse(fs.readFileSync('transactions.json', 'utf-8'));
+  const transactions = JSON.parse(fs.readFileSync(transactionsPath, 'utf-8'));
   res.json(transactions);
 });
 
