@@ -8,14 +8,6 @@
 </head>
 <body class="transfer-money">
 
-<!-- Protection: Redirect if not logged in -->
-<script>
-  const user = JSON.parse(localStorage.getItem('currentUser'));
-  if (!user) {
-    window.location.href = 'login.html';
-  }
-</script>
-
 <div class="top-right-links">
   <a href="dashboard.html">Go Back to Dashboard</a>
 </div>
@@ -31,60 +23,42 @@
 </div>
 
 <script>
-  // Initialize users if not already done
-  if (!localStorage.getItem('allUsers')) {
-    const users = [
-      { email: "farida@netsanctum.com", password: "try@h@ckm3!", name: "Farida", role: "admin", balance: 10000 },
-      { email: "ironman@avengers.com", password: "iamironman", name: "Tony Stark", role: "user", balance: 5000 },
-      { email: "spiderman@avengers.com", password: "withgreatpower", name: "Peter Parker", role: "user", balance: 3000 },
-      { email: "natasha@avengers.com", password: "blackwidow", name: "Natasha Romanoff", role: "user", balance: 4000 },
-      { email: "cap@avengers.com", password: "freedom", name: "Steve Rogers", role: "user", balance: 4500 },
-      { email: "thor@asgard.com", password: "godofthunder", name: "Thor Odinson", role: "user", balance: 6000 }
-    ];
-    localStorage.setItem('allUsers', JSON.stringify(users));
+  const user = JSON.parse(localStorage.getItem('currentUser'));
+  if (!user) {
+    window.location.href = 'login.html';
   }
 
-  document.getElementById('transferForm').addEventListener('submit', function(e) {
+  document.getElementById('transferForm').addEventListener('submit', async function (e) {
     e.preventDefault();
 
     const receiverEmail = document.getElementById('receiverEmail').value.trim();
     const amount = parseFloat(document.getElementById('amount').value.trim());
 
-    let users = JSON.parse(localStorage.getItem('allUsers'));
-    let currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+    try {
+      const res = await fetch('/api/transfer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          senderEmail: user.email,
+          receiverEmail,
+          amount
+        })
+      });
 
-    const receiver = users.find(u => u.email === receiverEmail);
-    const sender = users.find(u => u.email === currentUser.email);
+      const data = await res.json();
 
-    if (!receiver) {
-      document.getElementById('transferMessage').innerText = "Receiver not found.";
-      return;
+      if (data.success) {
+        document.getElementById('transferMessage').innerText = 'Transfer successful!';
+        if (data.user) {
+          localStorage.setItem('currentUser', JSON.stringify(data.user));
+        }
+      } else {
+        document.getElementById('transferMessage').innerText = data.message || 'Transfer failed.';
+      }
+    } catch (err) {
+      document.getElementById('transferMessage').innerText = 'Server error. Please try again.';
+      console.error(err);
     }
-
-    if (amount <= 0 || sender.balance < amount) {
-      document.getElementById('transferMessage').innerText = "Invalid amount or insufficient balance.";
-      return;
-    }
-
-    sender.balance -= amount;
-    receiver.balance += amount;
-
-    const newTransaction = {
-      sender: sender.name,
-      receiver: receiver.name,
-      amount: amount,
-      timestamp: new Date().toISOString()
-    };
-
-    transactions.push(newTransaction);
-
-    // Update localStorage
-    localStorage.setItem('allUsers', JSON.stringify(users));
-    localStorage.setItem('transactions', JSON.stringify(transactions));
-    localStorage.setItem('currentUser', JSON.stringify(sender));
-
-    document.getElementById('transferMessage').innerText = "Transfer successful!";
   });
 </script>
 

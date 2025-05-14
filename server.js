@@ -6,12 +6,14 @@ const path = require('path');
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.static(__dirname));
+
+// Serve static frontend
+app.use(express.static(path.join(__dirname, 'docs')));
 
 // API: LOGIN
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body;
-  const users = JSON.parse(fs.readFileSync('users.json', 'utf-8'));
+  const users = JSON.parse(fs.readFileSync(path.join(__dirname, 'users.json'), 'utf-8'));
   const user = users.find(u => u.email === email && u.password === password);
 
   if (user) {
@@ -24,8 +26,11 @@ app.post('/api/login', (req, res) => {
 // API: TRANSFER MONEY
 app.post('/api/transfer', (req, res) => {
   const { senderEmail, receiverEmail, amount } = req.body;
-  const users = JSON.parse(fs.readFileSync('users.json', 'utf-8'));
-  const transactions = JSON.parse(fs.readFileSync('transactions.json', 'utf-8'));
+  const usersPath = path.join(__dirname, 'users.json');
+  const transactionsPath = path.join(__dirname, 'transactions.json');
+
+  const users = JSON.parse(fs.readFileSync(usersPath, 'utf-8'));
+  const transactions = JSON.parse(fs.readFileSync(transactionsPath, 'utf-8'));
 
   const sender = users.find(u => u.email === senderEmail);
   const receiver = users.find(u => u.email === receiverEmail);
@@ -50,16 +55,21 @@ app.post('/api/transfer', (req, res) => {
 
   transactions.push(newTransaction);
 
-  fs.writeFileSync('users.json', JSON.stringify(users, null, 2));
-  fs.writeFileSync('transactions.json', JSON.stringify(transactions, null, 2));
+  fs.writeFileSync(usersPath, JSON.stringify(users, null, 2));
+  fs.writeFileSync(transactionsPath, JSON.stringify(transactions, null, 2));
 
   res.json({ success: true, message: 'Transaction successful' });
 });
 
 // API: GET TRANSACTION HISTORY
 app.get('/api/transactions', (req, res) => {
-  const transactions = JSON.parse(fs.readFileSync('transactions.json', 'utf-8'));
+  const transactions = JSON.parse(fs.readFileSync(path.join(__dirname, 'transactions.json'), 'utf-8'));
   res.json(transactions);
+});
+
+// Catch-all to serve frontend routes for static HTML
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'docs', 'index.html'));
 });
 
 app.listen(PORT, () => {
