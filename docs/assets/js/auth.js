@@ -5,23 +5,26 @@ document.getElementById('loginForm').addEventListener('submit', async function (
   const password = document.getElementById('password').value.trim();
 
   try {
-    const res = await fetch('/api/login', {
+    const response = await fetch('/api/login', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify({ email, password })
     });
 
-    const data = await res.json();
+    const data = await response.json();
 
     if (data.success) {
       localStorage.setItem('currentUser', JSON.stringify(data.user));
       window.location.href = 'dashboard.html';
     } else {
-      document.getElementById('errorMessage').innerText = data.message || 'Login failed.';
+      document.getElementById('errorMessage').innerText = data.message || 'Invalid email or password.';
     }
-  } catch (err) {
-    console.error('Login error:', err);
-    document.getElementById('errorMessage').innerText = 'Server error.';
+  } catch (error) {
+    console.error('Login error:', error);
+    document.getElementById('errorMessage').innerText = 'Server error. Please try again.';
   }
 });
+
 
