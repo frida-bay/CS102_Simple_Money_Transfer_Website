@@ -8,24 +8,43 @@ const PORT = process.env.PORT || 3000;
 const usersPath = path.resolve(__dirname, 'users.json');
 const transactionsPath = path.resolve(__dirname, 'transactions.json');
 
+const loginLogPath = path.join(__dirname, 'login_attempts.log');
+
 console.log('Using users.json at:', usersPath);
 console.log('Using transactions.json at:', transactionsPath);
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'docs')));
 
-// Login API
+// Login API with logging of unsuccessful attempts
 app.post('/api/login', (req, res) => {
   try {
     const { email, password } = req.body;
     const fakeUsers = JSON.parse(fs.readFileSync(usersPath, 'utf-8'));
     const user = fakeUsers.find(u => u.email === email && u.password === password);
 
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      ip: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
+      email: email,
+      status: user ? 'success' : 'failed',
+      reason: user ? 'Authenticated' : 'Invalid credentials'
+    };
+
+    // Optional: print to terminal
+    console.log(`[LOGIN ATTEMPT] ${JSON.stringify(logEntry)}`);
+
+    // Append to login_attempts.log
+    fs.appendFile(loginLogPath, JSON.stringify(logEntry) + '\n', err => {
+      if (err) console.error('Error writing login attempt to log file:', err);
+    });
+
     if (user) {
       res.json({ success: true, user });
     } else {
       res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
+
   } catch (err) {
     console.error('Login error:', err.message);
     res.status(500).json({ success: false, message: 'Server error during login' });
